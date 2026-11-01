@@ -1,0 +1,12 @@
+# Opt-in: systemctl --user enable --now \
+#   ~/.config/omarchy/plugins/community.singbox-vpn/singbox-vpn-autoconnect.service
+[Unit]
+Description=sing-box VPN: connect after login
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 -I %h/.config/omarchy/plugins/community.singbox-vpn/autoconnect.py
+TimeoutStartSec=300
+
+[Install]
+WantedBy=default.target

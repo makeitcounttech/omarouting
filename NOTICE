@@ -1,0 +1,2 @@
+sing-box (GPL-3.0) is an external runtime dependency and is not bundled.
+This repository contains the MIT-licensed frontend only; routing backend components must be obtained and reviewed separately.

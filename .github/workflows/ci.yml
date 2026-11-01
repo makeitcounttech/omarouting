@@ -1,0 +1,40 @@
+name: Release checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned scanners and lint tools
+        run: |
+          python -m pip install ruff==0.17.2 shellcheck-py==0.11.0.1
+          curl -fsSLo gitleaks.tar.gz https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz
+          printf '%s  gitleaks.tar.gz\n' 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb | sha256sum -c -
+          tar -xzf gitleaks.tar.gz gitleaks
+          sudo install -m755 gitleaks /usr/local/bin/gitleaks
+          rm gitleaks gitleaks.tar.gz
+      - name: Secrets in tree and full history
+        run: |
+          gitleaks dir . --redact --no-banner
+          gitleaks git . --redact --no-banner --log-opts=--all
+      - name: Privacy in tree and commit
+        run: |
+          bash scripts/privacy-scan.sh
+          bash scripts/privacy-scan.sh --commit HEAD
+      - name: Syntax, manifest layout and scanner regression tests
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python -B scripts/lint.py

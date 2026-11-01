@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "id": "community.singbox-vpn",
+  "name": "OmaRouting",
+  "author": "makeitcount.tech",
+  "license": "MIT",
+  "version": "1.1.0",
+  "description": "OmaRouting: per-app and default routing over VPN (WireGuard, Headscale/Tailscale, proxies) for Omarchy, built on sing-box. Omarchy bar VPN controls: authenticated application/default routing policy, separate managed browser profiles, Country → City → Server selection, and Settings connection imports. Host capture remains safety-gated; configured policy is not proof of active traffic.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "OmaRouting",
+    "description": "Configure observed application and default routes through the local runtime broker, manage separate browser profiles, and inspect explicit runtime status. Host capture requires its independent safety gate.",
+    "category": "Network",
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "configPath": "~/.config/sing-box/config.json",
+      "refreshIntervalSec": 5,
+      "barLabel": "Icon only",
+      "hideWhenDown": false,
+      "ipLookupService": "ifconfig.co"
+    },
+    "schema": [
+      {
+        "key": "configPath",
+        "type": "path",
+        "label": "sing-box config",
+        "defaultValue": "~/.config/sing-box/config.json",
+        "description": "Read-only legacy display configuration. Application and managed-profile control uses the authenticated local runtime broker, never a caller-supplied Clash endpoint or bearer secret."
+      },
+      {
+        "key": "refreshIntervalSec",
+        "type": "integer",
+        "label": "Refresh interval (seconds)",
+        "min": 2,
+        "max": 300,
+        "step": 1,
+        "defaultValue": 5,
+        "description": "How often to poll the engine state and traffic totals. Live speed streams every second while the panel is open, independently of this."
+      },
+      {
+        "key": "barLabel",
+        "type": "enum",
+        "label": "Bar label",
+        "options": [
+          "Icon only",
+          "Live speed",
+          "Uptime"
+        ],
+        "defaultValue": "Icon only",
+        "description": "What to show next to the icon while the tunnel is up."
+      },
+      {
+        "key": "hideWhenDown",
+        "type": "boolean",
+        "label": "Hide when the tunnel is off",
+        "defaultValue": false,
+        "description": "Remove the widget from the bar entirely while disconnected. Leave off to keep a dimmed icon you can click to connect."
+      },
+      {
+        "key": "ipLookupService",
+        "type": "enum",
+        "label": "Exit address lookup",
+        "options": [
+          "ipinfo.io",
+          "ifconfig.co",
+          "ipwho.is",
+          "api.ipify.org",
+          "Off"
+        ],
+        "defaultValue": "ifconfig.co",
+        "description": "Which service is asked, through the tunnel and over HTTPS only, where traffic exits. Fixed choices rather than a URL, so the plugin can only ever talk to these. Off disables the lookup entirely."
+      }
+    ],
+    "aliases": [
+      "vpn",
+      "routing",
+      "sing-box",
+      "omarouting"
+    ]
+  }
+}
